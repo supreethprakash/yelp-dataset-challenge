@@ -1,5 +1,5 @@
 '''
-This file contains all the utilities functions that can be used in this project.
+This file contains all the utility functions that can be used in this project.
 '''
 
 import csv
