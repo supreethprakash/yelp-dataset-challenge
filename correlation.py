@@ -2,7 +2,7 @@ from utilities import *
 from scipy.stats import spearmanr
 
 
-def find_pearson(userMap, valueList):
+def findSpearmanRank(userMap, valueList):
 	spearmanDict = dict()
 
 	for idx, item in enumerate(valueList):
@@ -39,7 +39,7 @@ def printPossibleFollowers(dictionary):
 if __name__ == '__main__':
 	content = readFile('Data/yelp_academic_dataset_user.csv')
 	userDict, userIndexMap, valList, userIDName = createUserDict(content)
-	spearManDict = find_pearson(userIndexMap, valList)
+	spearManDict = findSpearmanRank(userIndexMap, valList)
 	makeModelFile('correlatedModelFile', (spearManDict, userIDName))
 	userAndFollowers = getModelFile('correlatedModelFile')
 	printPossibleFollowers(userAndFollowers)

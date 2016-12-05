@@ -12,7 +12,8 @@ def readFile(fileName):
 		for row in reader:
 			fileContents.append(row)
 	f.close()
-	return fileContents[1:1000] #Restricting it to 150 for testing purpose
+	return fileContents[1:1000] #Restricting it to 1000 for testing purpose
+
 '''
 Adds all the compliment values
 '''
