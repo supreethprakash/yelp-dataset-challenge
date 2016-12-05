@@ -1,5 +1,6 @@
 from utilities import *
 from scipy.stats import spearmanr
+import os
 
 
 def findSpearmanRank(userMap, valueList):
@@ -37,10 +38,11 @@ def printPossibleFollowers(dictionary):
 
 
 if __name__ == '__main__':
-	content = readFile('Data/yelp_academic_dataset_user.csv')
-	userDict, userIndexMap, valList, userIDName = createUserDict(content)
-	spearManDict = findSpearmanRank(userIndexMap, valList)
-	makeModelFile('correlatedModelFile', (spearManDict, userIDName))
+	if not os.path.isfile('correlatedModelFile'):
+		content = readFile('Data/yelp_academic_dataset_user.csv')
+		userDict, userIndexMap, valList, userIDName = createUserDict(content)
+		spearManDict = findSpearmanRank(userIndexMap, valList)
+		makeModelFile('correlatedModelFile', (spearManDict, userIDName))
 	userAndFollowers = getModelFile('correlatedModelFile')
 	printPossibleFollowers(userAndFollowers)
 
