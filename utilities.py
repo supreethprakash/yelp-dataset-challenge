@@ -5,6 +5,13 @@ This file contains all the utility functions that can be used in this project.
 import csv
 import pickle
 
+categoriesMain = ['Indian', 'Chinese', 'Japanese', 'American', 'Thai', 'Italian', 'Pakistani', 'Mediterranean', 'Delis', 'Ethiopian', 'Mexican', 'Vietnamese', 'Caribbean', 'Greek', 'Coffee & Tea', 'Breakfast & Brunch', 'Korean']
+
+map_cuisine = dict()
+map_cuisine['American'] = ['Beer', 'Bars', 'Burgers', 'Pubs', 'Bakeries', 'Sandwiches', 'Smoothies', 'Barbeque', 'Steakhouses', 'Donuts', 'Fast Food']
+map_cuisine['Italian'] = ['Pizza']
+map_cuisine['Japanese'] = ['Noodles']
+
 def readFile(fileName):
 	fileContents = []
 	with open(fileName, 'rb') as f:
@@ -53,4 +60,39 @@ def makeModelFile(filename, content):
 def getModelFile(fileName):
 	with open(fileName, 'rb') as file:
 		return pickle.load(file)
+
+
+def consolidateCusines(fileName, newFileName):
+    categoryList = {}
+    finalCategory = []
+    with open(fileName, 'rb') as file:
+        categories = csv.reader(file)
+        for row in categories:
+            category = row[1].translate(None, "'\\").translate(None, '[').translate(None, ']').split(',')
+            category = map(str.strip, category)
+            categoryList[row[0].strip()] = category
+
+    with open(newFileName, 'wb') as file2:
+        writer = csv.writer(file2)
+        for key, val in categoryList.items():
+            items = []
+            for cuisines in val:
+                if cuisines in categoriesMain:
+                    val = cuisines
+                else:
+                    if cuisines in map_cuisine['American']:
+                        val = 'American'
+                    elif cuisines in map_cuisine['Italian']:
+                        val = 'Italian'
+                    elif cuisines in map_cuisine['Japanese']:
+                        val = 'Japanese'
+            items.append(key)
+            if type(val) != list:
+                items.append(val)
+                finalCategory.append(items)
+        writer.writerows(finalCategory)
+    file2.close()
+
+
+#consolidateCusines('business_extract.csv', 'newBusiness.csv')
 
