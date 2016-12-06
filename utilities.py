@@ -19,7 +19,7 @@ def readFile(fileName):
 		for row in reader:
 			fileContents.append(row)
 	f.close()
-	return fileContents[1:1000] #Restricting it to 1000 for testing purpose
+	return fileContents[1:len(fileContents)] #Restricting it to 1000 for testing purpose
 
 '''
 Adds all the compliment values
@@ -94,5 +94,12 @@ def consolidateCusines(fileName, newFileName):
     file2.close()
 
 
-#consolidateCusines('business_extract.csv', 'newBusiness.csv')
+def mapBusinessId(fileName):
+	eachRow = {}
+	with open(fileName, 'rb') as f:
+		reader = csv.reader(f, dialect='excel', delimiter=',')
+		for row in reader:
+			eachRow[row[0].strip()] = row[1].strip()
+	f.close()
+	return eachRow
 
