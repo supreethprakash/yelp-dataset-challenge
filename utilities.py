@@ -4,6 +4,8 @@ This file contains all the utility functions that can be used in this project.
 
 import csv
 import pickle
+import os
+import operator
 
 categoriesMain = ['Indian', 'Chinese', 'Japanese', 'American', 'Thai', 'Italian', 'Pakistani', 'Mediterranean', 'Delis', 'Ethiopian', 'Mexican', 'Vietnamese', 'Caribbean', 'Greek', 'Coffee & Tea', 'Breakfast & Brunch', 'Korean']
 
@@ -102,4 +104,16 @@ def mapBusinessId(fileName):
 			eachRow[row[0].strip()] = row[1].strip()
 	f.close()
 	return eachRow
+
+def printBusinessNecessaryInfo(businesses, fileName):
+	file = open(fileName, 'w')
+	for everyBusiness in businesses:
+		file.write(everyBusiness[15] + ',' + everyBusiness[38] + ',' + everyBusiness[44].strip().translate(None, '\n').translate(None, ',') + ',' + everyBusiness[58] + ',' + everyBusiness[93])
+		file.write(os.linesep)
+
+def returnMaxinDict(dict1):
+	if bool(dict1):
+		return max(dict1.iteritems(), key=operator.itemgetter(1))[0]
+	else:
+		return 'No Info'
 
