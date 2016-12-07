@@ -100,7 +100,7 @@ def train_model():
         createMatrix(line, cc)
         cc+=1
 
-    print(documentMatrix)
+    #print(documentMatrix)
 
     for k in documentMatrix.keys():
         for i in range(len(documentMatrix.get(k)[0])):
@@ -123,7 +123,7 @@ def test_model():
         createMatrix1(line, cc)
         cc+=1
 
-    print(documentMatrix1)
+    #print(documentMatrix1)
 
     for k in documentMatrix1.keys():
         for i in range(len(documentMatrix1.get(k)[0])):
@@ -135,7 +135,7 @@ def test_model():
     return csr_matrix(coo)
 
 
-with open('testing.csv') as csv_file:
+with open('final_csv.csv') as csv_file:
     reader = csv.reader(csv_file, delimiter=",", quotechar='"')
     data = []
     target = []
@@ -145,21 +145,27 @@ with open('testing.csv') as csv_file:
             target.append(row[1])
 
 X_train, X_test, y_train, y_test = train_test_split(data, target, test_size=0.3, random_state=0)
-print(X_train)
-print(X_test)
+#print(X_train)
+#print(X_test)
+
+tfidf_transformer = TfidfTransformer()
 
 #knn
-neigh = KNeighborsClassifier(n_neighbors=1)
-neigh.fit(train_model(), y_train)
-predicted = neigh.predict(test_model())
-print(predicted)
+neigh = KNeighborsClassifier(n_neighbors=4)
+data_final = tfidf_transformer.fit_transform(train_model())
+#print(data_final)
+neigh.fit(data_final, y_train)
+data_testing = tfidf_transformer.transform(test_model())
+#print(data_testing)
+predicted = neigh.predict(data_testing)
+#print(predicted)
 evaluate_model(y_test,predicted)
 
 #svm
-clf = svm.SVC(decision_function_shape='ovo')
+clf = svm.SVC(decision_function_shape='ovr')
 clf.fit(train_model(), y_train)
 predicted1 = clf.predict(test_model())
-print(predicted1)
+#print(predicted1)
 evaluate_model(y_test,predicted1)
 
 '''
