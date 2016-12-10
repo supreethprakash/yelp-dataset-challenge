@@ -1,5 +1,6 @@
 from utilities import *
 import os
+import operator
 
 def makeUserDictionary(reviews, busID):
 	userDict = dict()
@@ -31,15 +32,19 @@ def findBestCategory(userDict):
 		usersFavCuisine[key] = cuisine
 	return usersFavCuisine
 
+
 def printToFile(fileName, usersFavCuisine):
 	file = open(fileName, 'w')
+	print "Users most Favorite Categories"
 	for key, val in usersFavCuisine.items():
 		file.write(key + ',' + val)
 		file.write(os.linesep)
+		print key + " - " + val
 
 if __name__ == '__main__':
 	reviews = readFile('Data/min.csv')
 	businessIDMap = mapBusinessId('Data/newBusiness.csv')
 	userSpecDict = makeUserDictionary(reviews, businessIDMap)
-	userFavCategory = findBestCategory(userSpecDict)
-	printToFile('userFavCusinies.txt', userFavCategory)
+	makeModelFile('userCategories', sumUpValues(userSpecDict, 'category'))
+	#userFavCategory = findBestCategory(userSpecDict)
+	#printToFile('userFavCusinies.txt', userFavCategory)

@@ -61,7 +61,9 @@ def makeModelFile(filename, content):
 
 def getModelFile(fileName):
 	with open(fileName, 'rb') as file:
-		return pickle.load(file)
+		a = pickle.load(file)
+		file.close()
+		return a
 
 
 def consolidateCusines(fileName, newFileName):
@@ -117,3 +119,11 @@ def returnMaxinDict(dict1):
 	else:
 		return 'No Info'
 
+
+def sumUpValues(userDict, mode):
+	for key, val in userDict.items():
+		for key1, val1 in val.items():
+			if mode != 'neighborhood':
+				userDict[key][key1] = sum(val1)
+		userDict[key] = sorted(val.items(), key=operator.itemgetter(1), reverse=True)
+	return userDict

@@ -30,7 +30,10 @@ def userNeighborhood(reviews, businessDict):
 					downtownCity = businessDict[review[0][1:].translate(None, "\\'")][3] + ',' + businessDict[review[0][1:].translate(None, "\\'")][0]
 				else:
 					downtownCity = businessDict[review[0][1:].translate(None, "\\'")][3] + ',' + businessDict[review[0][1:].translate(None, "\\'")][2] + ',' + businessDict[review[0][1:].translate(None, "\\'")][0]
-				userDict[review[3][1:].translate(None, "\\'")][downtownCity] = 1
+				if not downtownCity in userDict[review[3][1:].translate(None, "\\'")]:
+					userDict[review[3][1:].translate(None, "\\'")][downtownCity] = 1
+				else:
+					userDict[review[3][1:].translate(None, "\\'")][downtownCity] += 1
 
 	return userDict
 
@@ -39,6 +42,7 @@ def printUserPrefNeighborhood(userDict, fileName):
 	for key, val in userDict.items():
 		file.write(key + ',' + returnMaxinDict(val))
 		file.write(os.linesep)
+		print key + " - " + returnMaxinDict(val)
 
 if __name__ == '__main__':
 	completeBusInfo = readFile('Data/yelp_academic_dataset_business.csv')
@@ -47,4 +51,5 @@ if __name__ == '__main__':
 	businessInfoDict = makeDict('businessFile.csv')
 	reviews = readFile('Data/min.csv')
 	userSpecDict = userNeighborhood(reviews, businessInfoDict)
-	printUserPrefNeighborhood(userSpecDict, 'userFavNeighborhood.csv')
+	makeModelFile('userNeighborhood', sumUpValues(userSpecDict, 'neighborhood'))
+	#printUserPrefNeighborhood(userSpecDict, 'userFavNeighborhood.csv')
