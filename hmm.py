@@ -3,9 +3,6 @@ from collections import Counter
 import operator
 
 
-d = defaultdict(list)
-result = defaultdict()
-lst = []
 
 
 
@@ -19,17 +16,12 @@ def emissionProbabilty(category,review,categoryReview):
     eP = float(c)/tC
     return eP
 
-
-
-
 def transitionProbability(curr,prev,prevCategory):
     cT = prevCategory[curr][prev]
     tC = sum(prevCategory[curr].values())
     if cT == 0:
         return 0.0000001
     return float(cT)/tC
-
-
 
 def returnMaxinDict(dict1):
     if bool(dict1):
@@ -44,7 +36,8 @@ def hmm(d):
     prevCategory = defaultdict(Counter)
     initialProb = {}
     totalReviews = ['good','bad']
-    categoryList = ['American','Breakfast & Brunch','Italian','Chinese','Coffee & Tea']
+    categoryList = ['American','Breakfast & Brunch','Italian','Chinese','Coffee & Tea', 'Mediterranean']
+    iP = float(1)/len(categoryList)
 
     l = []
     for i,j in d.iteritems():
@@ -53,7 +46,7 @@ def hmm(d):
             category[x[0]] += 1
             l.append(x[1])
             if x[0] not in initialProb:
-                initialProb[x[0]] = 0.33
+                initialProb[x[0]] = iP
 
     for i in range(1,len(l)):
         prevCategory[l[i]][l[i-1]] += 1
@@ -85,7 +78,19 @@ def calcAccuracy(results):
     return float(correct)/len(results) * 100
 
 
+def calcTop2Accuracy(results):
+    correct = 0
+    for p,q in results.iteritems():
+        if q[0] in q[1]:
+            correct += 1
+    return float(correct)/len(results) * 100
+
 if __name__ == '__main__':
+
+    d = defaultdict(list)
+    result = defaultdict()
+    result2 = defaultdict()
+    lst = []
     with open('HMM_extract_final.csv','r') as f:
         for i in f:
             i = i.strip('\n')
@@ -103,13 +108,16 @@ if __name__ == '__main__':
     acc = 0
     for i,j in d.iteritems():
         diction = {}
-        #print j[:-1]
         actual = j[-1][0]
         diction[i] = j[:-1]
         g,b = hmm(diction)
         gCategory,v1 = returnMaxinDict(g['good'])
 
+        top2Category = sorted(g['good'], key=g['good'].get, reverse=True)[:2]
+
         result[i] = (actual,gCategory)
+
+        result2[i] = (actual,top2Category)
 
 
         if actual == gCategory:
@@ -120,5 +128,7 @@ if __name__ == '__main__':
         print 'The user with id:',i,'is likely to give his next good review for',gCategory,'with', '{0:.10f}'.format(v1),'probability'
 
     acc = calcAccuracy(result)
+    acc2 = calcTop2Accuracy(result2)
     print ''
-    print 'Accuracy of the model',acc
+    print 'Accuracy of the predicted value to be the correct value:',acc
+    print 'Accuracy of actual value being in top 2 predicted value:', acc2
