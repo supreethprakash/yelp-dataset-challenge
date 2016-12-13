@@ -10,6 +10,10 @@ from sklearn import svm
 from collections import Counter
 from scipy.sparse import csr_matrix, coo_matrix
 from sklearn.model_selection import train_test_split
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.decomposition import PCA
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import mutual_info_classif
 
 
 wordCount1 = Counter()
@@ -145,26 +149,56 @@ with open('final_csv.csv') as csv_file:
             target.append(row[1])
 
 X_train, X_test, y_train, y_test = train_test_split(data, target, test_size=0.3, random_state=0)
-#print(X_train)
-#print(X_test)
 
 tfidf_transformer = TfidfTransformer()
 
+print("Considering the entire feature space")
+
 #knn
-neigh = KNeighborsClassifier(n_neighbors=4)
+neigh = KNeighborsClassifier(n_neighbors=5)
 data_final = tfidf_transformer.fit_transform(train_model())
-#print(data_final)
+#print(data_final.shape[1])
+k = int(0.75 * data_final.shape[1])
+#X_new = SelectKBest(mutual_info_classif, k).fit_transform(data_final, y_train)
+#print(X_new.shape)
 neigh.fit(data_final, y_train)
 data_testing = tfidf_transformer.transform(test_model())
-#print(data_testing)
+#print(data_testing.shape)
+
+#X_new1 = SelectKBest(mutual_info_classif, k).fit_transform(data_testing, y_test)
+#print(X_new1.shape)
+
 predicted = neigh.predict(data_testing)
-#print(predicted)
 evaluate_model(y_test,predicted)
 
-#svm
-clf = svm.SVC(decision_function_shape='ovr')
-clf.fit(train_model(), y_train)
-predicted1 = clf.predict(test_model())
+#svm - use LinearSVC which implements “one-vs-the-rest” multi-class strategy
+clf = svm.LinearSVC()
+clf.fit(data_final, y_train)
+predicted1 = clf.predict(data_testing)
+#print(predicted1)
+evaluate_model(y_test,predicted1)
+
+print("After dimensinality reduction")
+
+#knn
+neigh = KNeighborsClassifier(n_neighbors=5)
+data_final = tfidf_transformer.fit_transform(train_model())
+#print(data_final.shape)
+X_new = SelectKBest(mutual_info_classif, k).fit_transform(data_final, y_train)
+#print(X_new.shape)
+neigh.fit(X_new, y_train)
+data_testing = tfidf_transformer.transform(test_model())
+#print(data_testing.shape)
+X_new1 = SelectKBest(mutual_info_classif, k).fit_transform(data_testing, y_test)
+#print(X_new1.shape)
+
+predicted = neigh.predict(X_new1)
+evaluate_model(y_test,predicted)
+
+#svm - use LinearSVC which implements “one-vs-the-rest” multi-class strategy
+clf = svm.LinearSVC()
+clf.fit(X_new, y_train)
+predicted1 = clf.predict(X_new1)
 #print(predicted1)
 evaluate_model(y_test,predicted1)
 
