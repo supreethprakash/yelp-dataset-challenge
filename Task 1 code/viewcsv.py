@@ -1,3 +1,5 @@
+
+
 import csv
 
 '''with open('yelp_academic_dataset_business.csv','r+', encoding="utf8") as file:

@@ -1,3 +1,7 @@
+'''
+Code written by Suhas Jagadish (jagadiss@iu.edu)
+'''
+
 import csv
 import collections, re
 from sklearn.neighbors import KNeighborsClassifier

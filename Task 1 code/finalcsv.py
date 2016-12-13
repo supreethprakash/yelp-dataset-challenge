@@ -1,4 +1,9 @@
 import csv
+
+'''
+Code written by Suhas Jagadish (jagadiss@iu.edu)
+'''
+
 '''
 with open('business_extract.csv','r+', encoding="utf8") as file:
     reader = csv.reader(file)
@@ -16,7 +21,7 @@ with open('newBusiness.csv', 'r+', encoding="utf8") as csvfile1:
         rev = csv.reader(csvfile2)
         bus1 = [row for row in bus]
         rev1 = [row for row in rev]
-        for r in rev1[]:
+        for r in rev1:
             review = []
             for b in bus1:
                 if r[1] == b[0]:
