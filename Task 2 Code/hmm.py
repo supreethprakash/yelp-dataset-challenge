@@ -1,11 +1,12 @@
 '''
-Code written by Raghuveer Krishnamurthy Kanchibal (rkanchib@iu.edu) | Formulation done by skeragod and rkanchib
+This code is written by Raghuveer Krishnamurthy Kanchibail | Formulation done by rkanchib and skeragod
 '''
 
 from collections import defaultdict
 from collections import Counter
+from utilities import *
 import operator
-
+import random
 
 def emissionProbabilty(category,review,categoryReview):
     c = categoryReview[category][review]
@@ -37,8 +38,8 @@ def hmm(d):
     prevCategory = defaultdict(Counter)
     initialProb = {}
     totalReviews = ['good','bad']
-    categoryList = ['American','Breakfast & Brunch','Italian','Chinese','Coffee & Tea', 'Mediterranean']
-    iP = float(1)/len(categoryList)
+    #categoryList = ['American','Breakfast & Brunch','Italian','Chinese','Coffee & Tea', 'Mediterranean']
+    iP = float(1)/len(categoriesMain)
 
     l = []
     for i,j in d.iteritems():
@@ -63,7 +64,7 @@ def hmm(d):
                 for c2 in totalReviews:
                     alpha[x][c1] += alpha[x-1][c2] * transitionProbability(c2,c1, prevCategory) * emissionProbabilty(j[x-1][0],c1,categoryReview)
             for c3 in totalReviews:
-                for c4 in categoryList:
+                for c4 in categoriesMain:
                     if c3 == 'good':
                         good[c3][c4] = emissionProbabilty(c4,c3,categoryReview) * alpha[x-1][c3]
                     else:
@@ -109,24 +110,39 @@ if __name__ == '__main__':
     acc = 0
     for i,j in d.iteritems():
         diction = {}
-        actual = j[-1][0]
-        diction[i] = j[:-1]
-        g,b = hmm(diction)
-        gCategory,v1 = returnMaxinDict(g['good'])
-
-        top2Category = sorted(g['good'], key=g['good'].get, reverse=True)[:2]
-
-        result[i] = (actual,gCategory)
-
-        result2[i] = (actual,top2Category)
-
-
-        if actual == gCategory:
-            counter1 += 1
-            counter2 += 1
+        if len(j) == 1:
+            actual = j[-1][0]
+            prob = 0
+            if j[0][1] == 'good':
+                counter1 += 1
+                counter2 += 1
+                print 'The user with id:', i, 'is likely to give his next good review for', actual, 'with probability 1.00000000'
+            else:
+                counter2+=1
+                prob = float(len(categoriesMain) - 1) / len(categoriesMain)
+                prob = float(prob)/len(categoriesMain)
+                r = random.randrange(0,len(categoriesMain))
+                randomCategory = categoriesMain[r]
+                print 'The user with id:', i, 'is likely to give his next good review for', randomCategory,'with', prob,' probability'
         else:
-            counter2 += 1
-        print 'The user with id:',i,'is likely to give his next good review for',gCategory,'with', '{0:.10f}'.format(v1),'probability'
+            actual = j[-1][0]
+            diction[i] = j[:-1]
+            g,b = hmm(diction)
+            gCategory,v1 = returnMaxinDict(g['good'])
+
+            top2Category = sorted(g['good'], key=g['good'].get, reverse=True)[:2]
+
+            result[i] = (actual,gCategory)
+
+            result2[i] = (actual,top2Category)
+
+
+            if actual == gCategory:
+                counter1 += 1
+                counter2 += 1
+            else:
+                counter2 += 1
+            print 'The user with id:',i,'is likely to give his next good review for',gCategory,'with', '{0:.10f}'.format(v1),'probability'
 
     acc = calcAccuracy(result)
     acc2 = calcTop2Accuracy(result2)

@@ -46,8 +46,8 @@ def printToFile(fileName, usersFavCuisine):
 		print key + " - " + val
 
 if __name__ == '__main__':
-	reviews = readFile('Data/min.csv')
-	businessIDMap = mapBusinessId('Data/newBusiness.csv')
+	reviews = readFile('../Data/min.csv')
+	businessIDMap = mapBusinessId('../Data/newBusiness.csv')
 	userSpecDict = makeUserDictionary(reviews, businessIDMap)
 	makeModelFile('userCategories', sumUpValues(userSpecDict, 'category'))
 	userFavCategory = findBestCategory(userSpecDict)

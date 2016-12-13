@@ -49,11 +49,11 @@ def printUserPrefNeighborhood(userDict, fileName):
 		print key + " - " + returnMaxinDict(val)
 
 if __name__ == '__main__':
-	completeBusInfo = readFile('Data/yelp_academic_dataset_business.csv')
+	completeBusInfo = readFile('../Data/yelp_academic_dataset_business.csv')
 	if not os.path.isfile('businessFile.csv'):
 		printBusinessNecessaryInfo(completeBusInfo, 'businessFile.csv')
 	businessInfoDict = makeDict('businessFile.csv')
-	reviews = readFile('Data/min.csv')
+	reviews = readFile('../Data/yelp_academic_dataset_review.csv')
 	userSpecDict = userNeighborhood(reviews, businessInfoDict)
 	makeModelFile('userNeighborhood', sumUpValues(userSpecDict, 'neighborhood'))
 	printUserPrefNeighborhood(userSpecDict, 'userFavNeighborhood.csv')
